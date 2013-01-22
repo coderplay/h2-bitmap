@@ -146,7 +146,7 @@ public class TestOpenBitSet extends TestBase {
             if ((values[i] >= lower) && (values[i] <= upper))
                 countArray++;
         }
-        System.out.println("count by array cost time: "
+        System.out.println("range count by array cost time: "
                 + (System.nanoTime() - start));
 
         start = System.nanoTime();
@@ -186,7 +186,7 @@ public class TestOpenBitSet extends TestBase {
         result.or(equalsToUpper);
 
         int intBitmtap = result.cardinality();
-        System.out.println("count by bitmap cost time: "
+        System.out.println("range count by bitmap cost time: "
                 + (System.nanoTime() - start));
 
         assertEquals(countArray, intBitmtap);

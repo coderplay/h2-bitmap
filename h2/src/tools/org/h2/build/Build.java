@@ -156,6 +156,8 @@ public class Build extends BuildBase {
                 File.pathSeparator + "ext/" + getLuceneJar() +
                 File.pathSeparator + "ext/slf4j-api-1.6.0.jar" +
                 File.pathSeparator + "ext/org.osgi.core-1.2.0.jar" +
+                File.pathSeparator + "ext/commons-logging-1.1.1.jar" +
+                File.pathSeparator + "ext/druid-0.2.11.jar" +
                 File.pathSeparator + System.getProperty("java.home") + "/../lib/tools.jar";
         FileList files;
         if (clientOnly) {
@@ -246,6 +248,11 @@ public class Build extends BuildBase {
                 "b353147a7d51fcfcd818d8aa6784839783db0915", offline);
         downloadOrVerify("ext/org.osgi.core-1.2.0.jar", "org/apache/felix", "org.osgi.core", "1.2.0",
                 "3006beb1ca6a83449def6127dad3c060148a0209", offline);
+        downloadOrVerify("ext/commons-logging-1.1.1.jar", "commons-logging", "commons-logging", "1.1.1",
+                "5043bfebc3db072ed80fbd362e7caf00e885d8ae", offline);
+        downloadOrVerify("ext/druid-0.2.11.jar", "com/alibaba", "druid", "0.2.11",
+                "70c22231d152a5e312076cdbd01d4d55464b5b68", offline);
+        
     }
 
     private void downloadOrVerify(String target, String group, String artifact,
@@ -667,8 +674,26 @@ public class Build extends BuildBase {
      */
     public void test() {
         downloadTest();
+        
+//        String cp = "temp" + File.pathSeparator + "bin/h2" + getJarSuffix() + File.pathSeparator +
+//        "ext/hsqldb.jar" + File.pathSeparator +
+//        "ext/hsqldb-2.0.0.jar" + File.pathSeparator +
+//        "ext/derby-10.6.1.0.jar" + File.pathSeparator +
+//        "ext/derbyclient-10.6.1.0.jar" + File.pathSeparator +
+//        "ext/derbynet-10.6.1.0.jar" + File.pathSeparator +
+//        "ext/postgresql-8.3-603.jdbc3.jar" + File.pathSeparator +
+//        "ext/mysql-connector-java-5.1.6.jar";
+        
+        String cp = "temp" +
+                File.pathSeparator + "ext/servlet-api-2.4.jar" +
+                File.pathSeparator + "ext/" + getLuceneJar() +
+                File.pathSeparator + "ext/slf4j-api-1.6.0.jar" +
+                File.pathSeparator + "ext/org.osgi.core-1.2.0.jar" +
+                File.pathSeparator + "ext/commons-logging-1.1.1.jar" +
+                File.pathSeparator + "ext/druid-0.2.11.jar";
         String testClass = System.getProperty("test", "org.h2.test.TestAll");
-        java(testClass, null);
+        StringList args = args("-Xmx128m", "-cp", cp, testClass);
+        exec("java", args);
     }
 
     /**
