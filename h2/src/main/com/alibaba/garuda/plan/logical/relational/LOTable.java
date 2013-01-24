@@ -17,6 +17,7 @@ import com.alibaba.garuda.plan.logical.LogicalPlan;
 public class LOTable extends LogicalRelationalOperator {
 
     public LOTable(LogicalPlan plan) {
+        // TODO:
         super("LOTable", plan);
     }
 

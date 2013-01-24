@@ -108,7 +108,7 @@ public abstract class LogicalRelationalOperator extends Operator {
     } 
 
     /**
-     * Get the alias of this operator.  That is, if the Pig Latin for this operator
+     * Get the alias of this operator.  That is, if the Garuda SQL for this operator
      * was 'X = sort W by $0' then the alias will be X.  For store and split it will
      * be the alias being stored or split.  Note that because of this this alias
      * is not guaranteed to be unique to a single operator.

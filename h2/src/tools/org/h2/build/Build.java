@@ -178,6 +178,7 @@ public class Build extends BuildBase {
         } else {
             args = args.plus("-Xlint:unchecked", "-g:none", "-d", "temp", "-sourcepath", "src/main", "-classpath", classpath);
         }
+        args = args.plus("-XDignore.symbol.file=true");
         javac(args, files);
 
         files = files("src/main/META-INF/services");

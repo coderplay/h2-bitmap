@@ -33,6 +33,7 @@ import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLTableSource;
 import com.alibaba.garuda.parser.ast.statement.GarudaSelectQueryBlock;
 import com.alibaba.garuda.parser.visitor.GarudaASTVisitorAdapter;
+import com.alibaba.garuda.plan.logical.expression.LogicalExpressionPlan;
 import com.alibaba.garuda.plan.logical.relational.LOFilter;
 import com.alibaba.garuda.plan.logical.relational.LOGroupBy;
 import com.alibaba.garuda.plan.logical.relational.LOJoin;
@@ -337,7 +338,10 @@ public class LogicalPlanGenerator extends GarudaASTVisitorAdapter {
     private void createFilterOp(SQLExpr expr) {
         if (expr == null)
             return;
-        LogicalRelationalOperator filterOp = new LOFilter(lp);
+
+        LogicalExpressionPlanGenerator g = new LogicalExpressionPlanGenerator();
+        expr.accept(g);
+        LogicalRelationalOperator filterOp = new LOFilter(lp, g.getPlan());
         addToLogicalPlan(filterOp);
     }
 

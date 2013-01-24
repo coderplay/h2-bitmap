@@ -30,10 +30,10 @@ import com.alibaba.garuda.plan.OperatorPlan;
 import com.alibaba.garuda.plan.logical.relational.LogicalRelationalOperator;
 
 /**
- * LogicalPlan is the logical view of relational operations Pig will execute 
- * for a given script.  Note that it contains only relational operations.
- * All expressions will be contained in LogicalExpressionPlans inside
- * each relational operator.
+ * LogicalPlan is the logical view of relational operations Garuda will execute
+ * for a given script. Note that it contains only relational operations. All
+ * expressions will be contained in LogicalExpressionPlans inside each
+ * relational operator.
  */
 public class LogicalPlan extends BaseOperatorPlan {
   

@@ -45,9 +45,10 @@ public class TestLogicalPlanPrinter extends TestBase {
 
     private void testLogicalPlanPrinter() throws Exception {
 
-        String sql = "SELECT NAME, COUNT(ID) from USER JOIN ITEM ON USER.ID = ITEM.USERID " +
-        		"JOIN ORDERS ON ORDERS.ID = USER.ID " +
-        		     "WHERE GENDER=1 GROUP BY NAME ORDER BY NAME LIMIT 100;";
+        String sql = "SELECT NAME, COUNT(ID) from USER JOIN ITEM ON USER.ID = ITEM.USERID "
+                + "JOIN ORDERS ON ORDERS.ID = USER.ID "
+                + "WHERE GENDER=1 AND NAME='min zhou' OR (FOO RLIKE 'foo') "
+                + "GROUP BY NAME ORDER BY NAME LIMIT 100;";
 
         SQLStatementParser parser = new GarudaStatementParser(sql);
         SQLSelectStatement stmt = parser.parseSelect();

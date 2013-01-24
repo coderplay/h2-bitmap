@@ -18,11 +18,9 @@
 package com.alibaba.garuda.plan.logical;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.h2.util.MultiMap;
@@ -31,7 +29,6 @@ import com.alibaba.garuda.plan.BaseOperatorPlan;
 import com.alibaba.garuda.plan.DotPlanDumper;
 import com.alibaba.garuda.plan.Operator;
 import com.alibaba.garuda.plan.logical.relational.LOFilter;
-import com.alibaba.garuda.plan.logical.relational.LOJoin;
 import com.alibaba.garuda.plan.logical.relational.LOTable;
 
 /**
@@ -128,9 +125,9 @@ public class DotLOPrinter extends DotPlanDumper {
     protected Collection<BaseOperatorPlan> getNestedPlans(Operator op) {
         Collection<BaseOperatorPlan> plans = new LinkedList<BaseOperatorPlan>();
 
-//        if(op instanceof LOFilter){
-//            plans.add(((LOFilter)op).getFilterPlan());
-//        }
+        if(op instanceof LOFilter){
+            plans.add(((LOFilter)op).getFilterPlan());
+        }
 //        else if(op instanceof LOForEach){
 //            plans.add(((LOForEach)op).getInnerPlan());
 //        }

@@ -153,11 +153,11 @@ public class LogicalPlanPrinter extends PlanVisitor {
     
     private String printNode(Operator node) throws FrontendException, IOException {
         StringBuilder sb = new StringBuilder(node.toString()+"\n");
-        
-        sb.append(planString(null));
-//        if(node instanceof LOFilter){
-//            sb.append(planString(((LOFilter)node).getPlan()));
-//        }
+
+        if(node instanceof LOFilter){
+            sb.append(planString(((LOFilter)node).getFilterPlan()));
+        }
+        System.out.println(sb.toString());
 //        else if(node instanceof LOProject){
 //            sb.append(planString(((LOProject)node).getPlan()));        
 //        }

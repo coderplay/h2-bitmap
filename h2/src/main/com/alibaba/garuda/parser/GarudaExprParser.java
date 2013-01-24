@@ -16,6 +16,8 @@
 package com.alibaba.garuda.parser;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOperator;
 import com.alibaba.druid.sql.parser.Lexer;
 import com.alibaba.druid.sql.parser.SQLExprParser;
 import com.alibaba.druid.sql.parser.SQLSelectParser;
@@ -32,6 +34,29 @@ public class GarudaExprParser extends SQLExprParser {
     public GarudaExprParser(String sql) {
         this(new GarudaLexer(sql));
         this.lexer.nextToken();
+    }
+    
+    @Override
+    public SQLExpr relationalRest(SQLExpr expr) {
+        if (identifierEquals("REGEXP")) {
+            lexer.nextToken();
+            SQLExpr rightExp = equality();
+
+            rightExp = relationalRest(rightExp);
+
+            return new SQLBinaryOpExpr(expr, SQLBinaryOperator.RegExp, rightExp);
+        }
+        
+        if (identifierEquals("RLIKE")) {
+            lexer.nextToken();
+            SQLExpr rightExp = equality();
+
+            rightExp = relationalRest(rightExp);
+
+            return new SQLBinaryOpExpr(expr, SQLBinaryOperator.RegExp, rightExp);
+        }
+
+        return super.relationalRest(expr);
     }
     
     public Limit parseLimit() {
@@ -57,7 +82,6 @@ public class GarudaExprParser extends SQLExprParser {
 
         return null;
     }
-    
     
     public SQLSelectParser createSelectParser() {
         return new GarudaSelectParser(this);
