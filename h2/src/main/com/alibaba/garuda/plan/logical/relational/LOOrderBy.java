@@ -26,6 +26,13 @@ public class LOOrderBy extends LogicalRelationalOperator {
         super("LOOrderBy", plan);
     }
 
+    public LOOrderBy(LogicalPlan plan,
+            List<LogicalExpressionPlan> sortColPlans, List<Boolean> ascCols) {
+        this(plan);
+        mSortColPlans = sortColPlans;
+        mAscCols = ascCols;
+    }
+
     @Override
     public LogicalSchema getSchema() throws FrontendException {
         return null;

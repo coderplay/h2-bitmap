@@ -28,7 +28,10 @@ import org.h2.util.MultiMap;
 import com.alibaba.garuda.plan.BaseOperatorPlan;
 import com.alibaba.garuda.plan.DotPlanDumper;
 import com.alibaba.garuda.plan.Operator;
+import com.alibaba.garuda.plan.logical.expression.LogicalExpressionPlan;
 import com.alibaba.garuda.plan.logical.relational.LOFilter;
+import com.alibaba.garuda.plan.logical.relational.LOOrderBy;
+import com.alibaba.garuda.plan.logical.relational.LOSelect;
 import com.alibaba.garuda.plan.logical.relational.LOTable;
 
 /**
@@ -125,18 +128,13 @@ public class DotLOPrinter extends DotPlanDumper {
     protected Collection<BaseOperatorPlan> getNestedPlans(Operator op) {
         Collection<BaseOperatorPlan> plans = new LinkedList<BaseOperatorPlan>();
 
-        if(op instanceof LOFilter){
-            plans.add(((LOFilter)op).getFilterPlan());
+        if (op instanceof LOFilter) {
+            plans.add(((LOFilter) op).getFilterPlan());
+        } else if (op instanceof LOSelect) {
+            plans.addAll(((LOSelect) op).getSelectPlans());
+        } else if (op instanceof LOOrderBy) {
+            plans.addAll(((LOOrderBy) op).getSortColPlans());
         }
-//        else if(op instanceof LOForEach){
-//            plans.add(((LOForEach)op).getInnerPlan());
-//        }
-//        else if(op instanceof LOGenerate){
-//            plans.addAll(((LOGenerate)op).getOutputPlans());
-//        }
-//        else if(op instanceof LOSort){
-//            plans.addAll(((LOSort)op).getSortColPlans()); 
-//        }
 //        else if(op instanceof LOSplitOutput){
 //            plans.add(((LOSplitOutput)op).getFilterPlan());
 //        }
@@ -146,8 +144,8 @@ public class DotLOPrinter extends DotPlanDumper {
     
     @Override
     protected boolean reverse(BaseOperatorPlan plan) {
-//        if (plan instanceof LogicalExpressionPlan)
-//            return true;
+        if (plan instanceof LogicalExpressionPlan)
+            return true;
         return false;
     }
 }

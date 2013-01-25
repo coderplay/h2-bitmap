@@ -28,8 +28,6 @@ import com.alibaba.garuda.plan.Operator;
 import com.alibaba.garuda.plan.OperatorPlan;
 import com.alibaba.garuda.plan.PlanVisitor;
 import com.alibaba.garuda.plan.logical.relational.LOFilter;
-import com.alibaba.garuda.plan.logical.relational.LOGroupBy;
-import com.alibaba.garuda.plan.logical.relational.LOJoin;
 import com.alibaba.garuda.plan.logical.relational.LOLimit;
 import com.alibaba.garuda.plan.logical.relational.LOOrderBy;
 import com.alibaba.garuda.plan.logical.relational.LOSelect;
@@ -154,13 +152,12 @@ public class LogicalPlanPrinter extends PlanVisitor {
     private String printNode(Operator node) throws FrontendException, IOException {
         StringBuilder sb = new StringBuilder(node.toString()+"\n");
 
-        if(node instanceof LOFilter){
-            sb.append(planString(((LOFilter)node).getFilterPlan()));
+        if (node instanceof LOFilter) {
+            sb.append(planString(((LOFilter) node).getFilterPlan()));
+        } else if (node instanceof LOSelect) {
+            for (OperatorPlan plan : ((LOSelect) node).getSelectPlans())
+                sb.append(planString(plan));
         }
-        System.out.println(sb.toString());
-//        else if(node instanceof LOProject){
-//            sb.append(planString(((LOProject)node).getPlan()));        
-//        }
 //        else if(node instanceof LOGroupBy){
 ////            MultiMap<Integer, LogicalExpressionPlan> plans = ((LOCogroup)node).getExpressionPlans();
 ////            for (int i : plans.keySet()) {
@@ -180,14 +177,12 @@ public class LogicalPlanPrinter extends PlanVisitor {
 ////                }
 ////            }
 //        }
-//        else if(node instanceof LOOrderBy){
-//            sb.append(planString(((LOGroupBy)node).getPlan()));
-////            for (OperatorPlan plan : ((LOOrderBy)node).getPlan())
-////                sb.append(planString(plan));
-//        }
-//        else if(node instanceof LOLimit){
-//            sb.append(planString(((LOLimit)node).getPlan()));
-//        }
+        else if (node instanceof LOOrderBy) {
+            for (OperatorPlan plan : ((LOOrderBy) node).getSortColPlans())
+                sb.append(planString(plan));
+        } else if (node instanceof LOLimit) {
+            sb.append(planString(((LOLimit) node).getLimitPlan()));
+        }
         return sb.toString();
     }
 

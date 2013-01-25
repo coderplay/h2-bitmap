@@ -15,6 +15,7 @@
  */
 package com.alibaba.garuda.plan.logical;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +25,14 @@ import org.apache.commons.logging.LogFactory;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLOrderBy;
+import com.alibaba.druid.sql.ast.SQLOrderingSpecification;
 import com.alibaba.druid.sql.ast.SQLSetQuantifier;
 import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLJoinTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelect;
 import com.alibaba.druid.sql.ast.statement.SQLSelectGroupByClause;
 import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
+import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
 import com.alibaba.druid.sql.ast.statement.SQLTableSource;
 import com.alibaba.garuda.parser.ast.statement.GarudaSelectQueryBlock;
 import com.alibaba.garuda.parser.visitor.GarudaASTVisitorAdapter;
@@ -312,21 +315,22 @@ public class LogicalPlanGenerator extends GarudaASTVisitorAdapter {
 
     @Override
     public boolean visit(SQLSelectGroupByClause x) {
-        LogicalRelationalOperator groupbyOp = new LOGroupBy(lp);
-        addToLogicalPlan(groupbyOp);
+        createGroupbyOp(x);
         return false;
     }
 
     @Override
     public boolean visit(SQLOrderBy x) {
-        LogicalRelationalOperator orderbyOp = new LOOrderBy(lp);
-        addToLogicalPlan(orderbyOp);
+        creatOrderbyOp(x);
         return false;
     }
 
     @Override
     public boolean visit(GarudaSelectQueryBlock.Limit limit) {
-        LogicalRelationalOperator limitOp = new LOLimit(lp);
+        LogicalExpressionPlanGenerator g = new LogicalExpressionPlanGenerator();
+        limit.getRowCount().accept(g);
+
+        LogicalRelationalOperator limitOp = new LOLimit(lp, g.getPlan());
         addToLogicalPlan(limitOp);
         return false;
     }
@@ -335,19 +339,44 @@ public class LogicalPlanGenerator extends GarudaASTVisitorAdapter {
         return lp;
     }
 
-    private void createFilterOp(SQLExpr expr) {
-        if (expr == null)
+    private void createFilterOp(SQLExpr where) {
+        if (where == null)
             return;
 
         LogicalExpressionPlanGenerator g = new LogicalExpressionPlanGenerator();
-        expr.accept(g);
+        where.accept(g);
         LogicalRelationalOperator filterOp = new LOFilter(lp, g.getPlan());
         addToLogicalPlan(filterOp);
     }
 
-    private void createSelectOp(List<SQLSelectItem> items) {
-        LogicalRelationalOperator projectionOp = new LOSelect(lp);
+    private void createSelectOp(List<SQLSelectItem> selects) {
+        List<LogicalExpressionPlan> exprPlans = new ArrayList<LogicalExpressionPlan>();
+        for (SQLSelectItem select : selects) {
+            LogicalExpressionPlanGenerator g = new LogicalExpressionPlanGenerator();
+            select.getExpr().accept(g);
+            exprPlans.add(g.getPlan());
+        }
+        LogicalRelationalOperator projectionOp = new LOSelect(lp, exprPlans);
         addToLogicalPlan(projectionOp);
+    }
+    
+    private void createGroupbyOp(SQLSelectGroupByClause x) {
+        LogicalRelationalOperator groupbyOp = new LOGroupBy(lp);
+        addToLogicalPlan(groupbyOp);
+    }
+
+    private void creatOrderbyOp(SQLOrderBy x) {
+        List<LogicalExpressionPlan> exprPlans = new ArrayList<LogicalExpressionPlan>();
+        List<Boolean> ascCols = new ArrayList<Boolean>();
+        for (SQLSelectOrderByItem item : x.getItems()) {
+            LogicalExpressionPlanGenerator g = new LogicalExpressionPlanGenerator();
+            item.getExpr().accept(g);
+            exprPlans.add(g.getPlan());
+            ascCols.add(item.getType() == SQLOrderingSpecification.ASC);
+        }
+        LogicalRelationalOperator orderbyOp = new LOOrderBy(lp, exprPlans,
+                ascCols);
+        addToLogicalPlan(orderbyOp);
     }
 
     private void addToLogicalPlan(LogicalRelationalOperator lo) {

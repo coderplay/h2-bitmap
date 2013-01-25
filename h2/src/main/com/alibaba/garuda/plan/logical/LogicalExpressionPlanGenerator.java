@@ -16,6 +16,7 @@
 package com.alibaba.garuda.plan.logical;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
 import com.alibaba.druid.sql.ast.expr.SQLCaseExpr;
 import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
@@ -46,6 +47,7 @@ import com.alibaba.garuda.plan.logical.expression.OrExpression;
 import com.alibaba.garuda.plan.logical.expression.ProjectExpression;
 import com.alibaba.garuda.plan.logical.expression.RegexExpression;
 import com.alibaba.garuda.plan.logical.expression.SubtractExpression;
+import com.alibaba.garuda.plan.logical.expression.UserFuncExpression;
 
 /**
  * @author Min Zhou (coderplay@gmail.com)
@@ -232,6 +234,13 @@ public class LogicalExpressionPlanGenerator extends GarudaASTVisitorAdapter {
 
     @Override
     public boolean visit(SQLMethodInvokeExpr x) {
+        x.putAttribute(EXPRESSION_CACHE, new UserFuncExpression(exprPlan));
+        return false;
+    }
+    
+    @Override
+    public boolean visit(SQLAggregateExpr x) {
+        x.putAttribute(EXPRESSION_CACHE, new UserFuncExpression(exprPlan));
         return false;
     }
 
