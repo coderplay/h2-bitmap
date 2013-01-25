@@ -14,10 +14,10 @@ import com.alibaba.garuda.plan.logical.LogicalPlan;
 /**
  * @author Min Zhou (coderplay@gmail.com)
  */
-public class LOProject extends LogicalRelationalOperator {
+public class LOSelect extends LogicalRelationalOperator {
 
-    public LOProject(LogicalPlan plan) {
-        super("LOProject", plan);
+    public LOSelect(LogicalPlan plan) {
+        super("LOSelect", plan);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class LOProject extends LogicalRelationalOperator {
 
     @Override
     public boolean isEqual(Operator other) throws FrontendException {
-        if (other != null && other instanceof LOProject) {
-            LOProject of = (LOProject) other;
+        if (other != null && other instanceof LOSelect) {
+            LOSelect of = (LOSelect) other;
             return checkEquality(of);
         } else {
             return false;

@@ -6,15 +6,21 @@
  */
 package com.alibaba.garuda.plan.logical.relational;
 
+import java.util.List;
+
 import com.alibaba.garuda.plan.FrontendException;
 import com.alibaba.garuda.plan.Operator;
 import com.alibaba.garuda.plan.PlanVisitor;
 import com.alibaba.garuda.plan.logical.LogicalPlan;
+import com.alibaba.garuda.plan.logical.expression.LogicalExpressionPlan;
 
 /**
  * @author Min Zhou (coderplay@gmail.com)
  */
 public class LOOrderBy extends LogicalRelationalOperator {
+
+    private List<Boolean> mAscCols;
+    private List<LogicalExpressionPlan> mSortColPlans;
 
     public LOOrderBy(LogicalPlan plan) {
         super("LOOrderBy", plan);
@@ -40,4 +46,19 @@ public class LOOrderBy extends LogicalRelationalOperator {
         }
     }
 
+    public List<Boolean> getAscendingCols() {
+        return mAscCols;
+    }
+
+    public void setAscendingCols(List<Boolean> ascCols) {
+        mAscCols = ascCols;
+    }
+
+    public List<LogicalExpressionPlan> getSortColPlans() {
+        return mSortColPlans;
+    }
+
+    public void setSortColPlans(List<LogicalExpressionPlan> sortPlans) {
+        mSortColPlans = sortPlans;
+    }
 }

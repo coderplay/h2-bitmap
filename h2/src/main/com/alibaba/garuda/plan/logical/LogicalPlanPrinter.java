@@ -32,7 +32,7 @@ import com.alibaba.garuda.plan.logical.relational.LOGroupBy;
 import com.alibaba.garuda.plan.logical.relational.LOJoin;
 import com.alibaba.garuda.plan.logical.relational.LOLimit;
 import com.alibaba.garuda.plan.logical.relational.LOOrderBy;
-import com.alibaba.garuda.plan.logical.relational.LOProject;
+import com.alibaba.garuda.plan.logical.relational.LOSelect;
 
 public class LogicalPlanPrinter extends PlanVisitor {
 

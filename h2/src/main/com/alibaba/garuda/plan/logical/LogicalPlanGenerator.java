@@ -39,7 +39,7 @@ import com.alibaba.garuda.plan.logical.relational.LOGroupBy;
 import com.alibaba.garuda.plan.logical.relational.LOJoin;
 import com.alibaba.garuda.plan.logical.relational.LOLimit;
 import com.alibaba.garuda.plan.logical.relational.LOOrderBy;
-import com.alibaba.garuda.plan.logical.relational.LOProject;
+import com.alibaba.garuda.plan.logical.relational.LOSelect;
 import com.alibaba.garuda.plan.logical.relational.LOTable;
 import com.alibaba.garuda.plan.logical.relational.LogicalRelationalOperator;
 
@@ -239,7 +239,7 @@ public class LogicalPlanGenerator extends GarudaASTVisitorAdapter {
 
         // Projection
         if (x.getSelectList() != null) {
-            createProjectionOp(x.getSelectList());
+            createSelectOp(x.getSelectList());
             connectRelationalOp();
         }
 
@@ -345,8 +345,8 @@ public class LogicalPlanGenerator extends GarudaASTVisitorAdapter {
         addToLogicalPlan(filterOp);
     }
 
-    private void createProjectionOp(List<SQLSelectItem> items) {
-        LogicalRelationalOperator projectionOp = new LOProject(lp);
+    private void createSelectOp(List<SQLSelectItem> items) {
+        LogicalRelationalOperator projectionOp = new LOSelect(lp);
         addToLogicalPlan(projectionOp);
     }
 
